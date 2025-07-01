@@ -1,0 +1,112 @@
+\documentclass[12pt]{article}
+% Packages
+\usepackage{amsmath, amssymb, amsfonts}
+\usepackage{geometry}
+\usepackage{enumitem}
+\usepackage{multicol}
+\usepackage{fancyhdr}
+\usepackage{textcomp}
+
+% Page setup
+\geometry{a4paper, margin=1in}
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{Quant Puzzle Editorial \#001}
+\chead{Topic: Brownian Motion}
+\rhead{Difficulty: Interview-Level}
+\lfoot{\today}
+\cfoot{\thepage}
+\rfoot{\textcopyright U. Irons}
+
+%\usepackage[a4paper,margin=1in]{geometry} % Adjust margins
+\usepackage{hyperref} % Clickable links
+%\usepackage{enumitem} % Better lists
+\usepackage{listings} % Code formatting
+\usepackage{xcolor} % Colors for code
+\usepackage{graphicx}
+
+% Define C++ Code Style
+\lstdefinestyle{cppstyle}{
+    language=C++,
+    basicstyle=\ttfamily\footnotesize,
+    keywordstyle=\color{blue},
+    commentstyle=\color{green},
+    stringstyle=\color{red},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    stepnumber=1,
+    breaklines=true,
+    tabsize=4,
+    frame=single
+}
+
+\newcommand{\cppinline}[1]{\lstinline[style=cppstyle]|#1|}
+
+\begin{document}
+
+\begin{center}
+    \Large \textbf{Quant Puzzle \#001: Brownian Flip}
+\end{center}
+
+\section*{Problem Statement}
+\textit{
+Suppose there is a Brownian Motion $W_t$. At time $t=1$, $W_1 > 0$. What is the probability that at time $t=2$, $W_2 < 0$? 
+}
+
+\bigskip
+
+\section*{Core Ideas}
+The following core ideas are used to solve this problem:
+\begin{itemize}
+    \item Brownian motion has stationary, independent increments that are normally distributed.
+    \item The sign of a Brownian increment is symmetric — positive and negative values are equally likely.
+    \item To reach below zero, the downward increment must exceed the positive value at $t=1$ in magnitude.
+\end{itemize}
+
+\bigskip
+
+\section*{Solution}
+We have two time steps of equal length. The first runs from time $t=0$ to time $t=1$. The second runs from time $t=1$ to $t=2$. We can partition the Brownian motion into these two time intervals to create the Brownian increments $W_2 - W_1$ and $W_1 - W_0$. Brownian increments over arbitrary time intervals $t=x$ to $t=y$, $x\leq y$ are Normally distributed with zero mean and variance equal to $y-x$.
+$$W_y - W_x \sim \mathcal{N}(0, y-x), \quad x\leq y$$
+Also important is the fact that non-overlapping Brownian increments are independent of each other. Because the increment $W_2 - W_1$ occurs independently of the increment $W_1 - W_0$ it may very well be the case that $W_1 - W_0 > 0$ and $W_2 - W_1 < 0$. The occurrence of one outcome has no effect on the likelihood of the other occurring.\\
+
+In order for $W_2 < 0$ we need $W_2 - W_1 < 0$ which, as we have a symmetric Normal distribution centered around a mean of $0$, occurs with probability $\frac{1}{2}$. We must also have that $|W_2-W_1| > |W_1 - W_0|$. Let $X = W_2 - W_1$ and $Y=W_1 - W_0$. This partitions into two cases:
+\begin{enumerate}
+    \item $X > Y$ and $Y > 0$
+    \item $X < Y$ and $Y < 0$
+\end{enumerate}
+
+\begin{align*}
+\mathbb{P}(X>Y, Y>0) &= \mathbb{P}(Y>0)\mathbb{P}(X>Y)\\
+&= \frac{1}{2}\mathbb{P}(X-Y>0)\\
+&= \frac{1}{2}\cdot\frac{1}{2}\\
+&= \frac{1}{4}
+\end{align*}
+
+And the same result holds for case 2 by identical reasoning. We see then that $\mathbb{P}(|W_2-W_1| > |W_1 - W_0|) = \frac{1}{2}$.
+Putting it all together we have:
+\begin{align*}
+    \mathbb{P}(W_2 < 0) &= \mathbb{P}(\text{sgn}(W_2-W_1) < 0)\cdot\mathbb{P}(|W_2-W_1| > |W_1 - W_0|)\\
+    &= \frac{1}{2}\cdot\frac{1}{2}\\
+    &= \frac{1}{4}
+\end{align*}
+which is the solution to this puzzle.
+
+\bigskip
+
+\section*{Takeaways}
+This is a classic quant brain-teaser. Simple to state yet subtle to solve. It tests knowledge of:
+\begin{itemize}
+    \item Brownian increments and their independence
+    \item The symmetry of the normal distribution
+    \item Conditional probability without conditioning formulas
+\end{itemize}
+You’ll see variations of this in interviews at hedge funds and trading firms.
+
+\vspace*{\fill}
+\begin{center}
+    \rule{\linewidth}{0.5pt} \\
+    \textbf{More Editorials:} \href{https://github.com/UIronsMaths/Quant-Puzzle-Editorials}{https://github.com/UIronsMaths/Quant-Puzzle-Editorials}
+\end{center}
+
+\end{document}
