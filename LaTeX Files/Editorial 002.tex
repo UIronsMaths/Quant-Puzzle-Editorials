@@ -1,0 +1,152 @@
+\documentclass[12pt]{article}
+% Packages
+\usepackage{amsmath, amssymb, amsfonts}
+\usepackage{geometry}
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{graphicx}
+
+%\geometry{a4paper, margin=1in}
+%\setlist{nosep}
+
+% Define C++ Code Style
+\lstdefinestyle{cppstyle}{
+    language=C++,
+    basicstyle=\ttfamily\footnotesize,
+    keywordstyle=\color{blue},
+    commentstyle=\color{green},
+    stringstyle=\color{red},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    stepnumber=1,
+    breaklines=true,
+    tabsize=4,
+    frame=single
+}
+
+\newcommand{\cppinline}[1]{\lstinline[style=cppstyle]|#1|}
+\newcommand{\Ito}{It$\hat{\text{o}}$ }
+\newcommand{\Itos}{It$\hat{\text{o}}$'s }
+
+% Page setup
+\geometry{a4paper, margin=1in}
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{Quant Puzzle Editorial \#002}
+\chead{Topic: \Ito Integrals}
+\rhead{Difficulty: Interview-Level}
+\lfoot{\today}
+\cfoot{\thepage}
+\rfoot{\textcopyright U. Irons}
+
+\begin{document}
+
+\begin{center}
+    \Large \textbf{Quant Puzzle \#002: A Canonical \Ito Integral Puzzle}
+\end{center}
+
+\section*{Problem Statement}
+\textit{Solve the stochastic integral}
+\[
+\int_0^t W_s \, dW_s,
+\]
+\textit{where \(W_t\) is standard Brownian motion.}\\ \\
+\section*{Follow-Up Question}
+\textit{Find the distribution of}
+\[
+\int_0^1 W_s \, dW_s.
+\]
+
+
+\bigskip
+
+\section*{Core Ideas}
+Key Tools:
+\begin{itemize}
+    \item Use \Itos lemma on $f(W_t) = \frac{W_t^2}{2}$ to derive a differential involving $W_t \, dW_t$, which rearranges directly into the desired integral.
+    \item Recognize that the integral $\int_0^1 W_s \, dW_s$ is a function of \(W_1\), and since \(W_1 \sim \mathcal{N}(0,1)\), the integral's distribution can be derived by a change of variables from a standard normal.
+\end{itemize}
+
+\bigskip
+
+\section*{Solution}
+
+We want to compute the stochastic integral
+\[
+\int_0^t W_s \, dW_s
+\]
+A naive application of standard calculus might suggest this equals \( \frac{W_t^2}{2} \), since \( \int x \, dx = \frac{x^2}{2} \).  
+However, in stochastic calculus, this is incorrect due to the non-zero quadratic variation of Brownian motion.
+To get the correct expression, apply \Itos lemma to the function \( f(W_t) = \frac{W_t^2}{2} \). Recall \Itos formula:
+\[
+df(t,X_t) = \frac{\partial f}{\partial t} \, dt + \frac{\partial f}{\partial x} \, dX_t + \frac{1}{2} \frac{\partial^2 f}{\partial x^2} \, (dX_t)^2
+\]
+Using \( X_t = W_t \) and \( f(x) = \frac{x^2}{2} \), we get:
+\[
+d\left(\frac{W_t^2}{2}\right) = W_t \, dW_t + \frac{1}{2} \, dt
+\]
+Rearranging gives:
+\[
+W_t \, dW_t = d\left(\frac{W_t^2}{2}\right) - \frac{1}{2} \, dt
+\]
+Integrate both sides from 0 to \( t \):
+\begin{align*}
+    \int_0^t W_s \, dW_s &= \frac{W_t^2}{2} - \frac{1}{2} \int_0^t ds = \frac{W_t^2 - t}{2}
+\end{align*}
+This is the value of the integral.
+To find the distribution of \( \int_0^1 W_s \, dW_s \), observe from above:
+\[
+\int_0^1 W_s \, dW_s = \frac{W_1^2 - 1}{2}
+\]
+Let \( Z = W_1 \sim \mathcal{N}(0,1) \). Define:
+\[
+X = \frac{Z^2 - 1}{2}
+\]
+To find the distribution of \( X \), compute its CDF:
+\begin{align*}
+    \mathbb{P}(X \leq x) &= \mathbb{P}\left(\frac{Z^2 - 1}{2} \leq x\right) \\
+    &= \mathbb{P}\left(Z^2 \leq 2x + 1\right) \\
+    &= \mathbb{P}\left(-\sqrt{2x + 1} \leq Z \leq \sqrt{2x + 1}\right) \\
+    &= 2 \Phi\left(\sqrt{2x + 1}\right)
+\end{align*}
+(where \( \Phi \) is the standard normal CDF).
+Differentiate to get the density:
+\begin{align*}
+    f_X(x) &= \frac{d}{dx} \left[ 2 \Phi\left( \sqrt{2x + 1} \right)\right] \\
+    &= \frac{2}{\sqrt{2\pi}} \cdot \frac{d}{dx} \left( \int_0^{\sqrt{2x+1}} e^{-y^2/2} \, dy \right) \\
+    &= \frac{2}{\sqrt{2\pi}} \cdot \frac{e^{- \frac{2x + 1}{2}}}{2 \sqrt{2x + 1}} \cdot 2 \\
+    &= \sqrt{\frac{2}{\pi}} \cdot \frac{e^{- \frac{2x + 1}{2}}}{\sqrt{2x + 1}}
+\end{align*}
+This is valid only when \( 2x + 1 > 0 \), i.e. \( x > -\frac{1}{2} \). So:
+\[
+f_X(x) = 
+\begin{cases}
+    \sqrt{\dfrac{2}{\pi}} \dfrac{e^{-\frac{2x+1}{2}}}{\sqrt{2x+1}}, & x > -\dfrac{1}{2} \\
+    0, & \text{otherwise}
+\end{cases}
+\]
+This is the distribution of \( \int_0^1 W_s \, dW_s \).
+
+\bigskip
+
+\section*{Takeaways}
+This is a classic quant interview puzzle that tests:
+
+\begin{itemize}
+    \item Knowing how and when to apply \Itos lemma, even in reverse.
+    \item Comfort with working backwards from stochastic differentials to integrals.
+    \item Ability to derive probability distributions via change-of-variable techniques.
+    \item Competence in differentiating composite functions involving integrals.
+\end{itemize}
+
+
+\vspace*{\fill}
+\begin{center}
+    \rule{\linewidth}{0.5pt} \\
+    \textbf{More Editorials:} \href{https://github.com/UIronsMaths/Quant-Puzzle-Editorials}{https://github.com/UIronsMaths/Quant-Puzzle-Editorials}
+\end{center}
+
+\end{document}
