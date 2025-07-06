@@ -2,7 +2,7 @@
 
 A curated collection of worked solutions to advanced quant puzzles, each one written as a standalone, well-structured PDF.  
 These editorials focus on the kinds of problems you’ll encounter in quantitative finance interviews and research:  
-**stochastic calculus, probability, dynamic programming, and mathematical modeling.**
+**stochastic calculus, probability, dynamic programming, and mathematical modelling.**
 
 ---
 
@@ -38,6 +38,7 @@ Puzzles are numbered and titled for easy reference.
 | Puzzle No. | Title | Topic | Difficulty |
 |------------|-------|-------|------------|
 | #001       | Brownian Flip | Stochastic Processes | Interview-Level |
+| #002       | A Canonical Ito Integral | Ito Integrals & Ito's Lemma | Interview-Level |
 | *(more coming soon)* | | | |
 
 ---
