@@ -1,0 +1,199 @@
+\documentclass[12pt]{article}
+% Packages
+\usepackage{amsmath, amssymb, amsfonts}
+\usepackage{geometry}
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{graphicx}
+
+%\geometry{a4paper, margin=1in}
+%\setlist{nosep}
+
+% Define C++ Code Style
+\lstdefinestyle{cppstyle}{
+    language=C++,
+    basicstyle=\ttfamily\footnotesize,
+    keywordstyle=\color{blue},
+    commentstyle=\color{green},
+    stringstyle=\color{red},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    stepnumber=1,
+    breaklines=true,
+    tabsize=4,
+    frame=single
+}
+
+\newcommand{\cppinline}[1]{\lstinline[style=cppstyle]|#1|}
+\newcommand{\Ito}{It$\hat{\text{o}}$ }
+\newcommand{\Itos}{It$\hat{\text{o}}$'s }
+
+% Page setup
+\geometry{a4paper, margin=1in}
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{Quant Puzzle Editorial \#003}
+\chead{Topic: SDEs}
+\rhead{Difficulty: Interview-Level}
+\lfoot{\today}
+\cfoot{\thepage}
+\rfoot{\textcopyright U. Irons}
+
+\begin{document}
+
+\begin{center}
+    \Large \textbf{Quant Puzzle \#003: Solving an Affine SDE with Multiplicative Noise.}
+\end{center}
+
+\section*{Problem Statement}
+\textit{Solve the following Stochastic Differential Equation}
+\[
+dX_t = \mu dt+ (aX_t + b)dW_t,
+\]
+\textit{where \(W_t\) is a Brownian Motion.}
+
+\bigskip
+
+\section*{Context \& Key Insights}
+This affine SDE models systems where randomness depends linearly on the current state which is common in finance for volatility and interest rates. Because the noise can grow with the process, the system can become unstable or even explode, making its solution both challenging and instructive.
+
+\section*{Core Ideas}
+Key Tools:
+\begin{itemize}
+    \item Use the method of variation of constants to write the solution as a product of two simpler stochastic processes.
+    \item Use \Itos Lemma to create an SDE for \(X_t\) in terms of its factors.
+    \item Solve the resulting SDE by equating the drift and diffusion coefficients.
+\end{itemize}
+
+\bigskip
+
+\section*{Solution}
+\textbf{Summary:} We solve this affine SDE using variation of constants. The process is decomposed into a product of two \Ito processes, with coefficients reverse-engineered to match the original SDE. This results in a clean closed-form expression for \(X_t\).
+
+\bigskip
+\noindent
+The SDE given in the problem statement is an Affine SDE. Any SDE of the form
+\[
+dX_t = f(t, X_t)dt + g(t, X_t) dW_t
+\]
+is an Affine SDE provided both \(f(t, X_t)\) and \(g(t, X_t)\) are linear in \(X_t\). The method of variation of constants allows us to find a closed form expression for the \Ito process \(X_t\) that solves the Affine SDE. For SDEs with non-affine $f$ and $g$, closed form solutions are often not easily obtainable and simulation would be used instead.
+
+\subsection*{The method of variation of constants}
+Given an SDE of the form
+\[
+dX_t = \left[ p_1(t) + p_2(t)X_t\right]dt + \left[ q_1(t) + q_2(t)X_t\right]dW_t
+\]
+We can solve it with the SDE equivalent of an integrating factor.
+\subsubsection*{Step 1: Solving the Homogeneous version of the SDE}
+For now forget about \(p_1(t)\) and \(q_1(t)\), the simpler Homogeneous SDE
+\[
+dY_t = p_2(t)Y_tdt+q_2(t)Y_tdW_t, \quad Y_0=1
+\]
+can be solved explicitly as follows. We begin with an application of \Itos lemma:
+\[
+d\log(Y_t) = \frac{dY_t}{Y_t} - \frac{(dY_t)^2}{2Y_t^2}
+\]
+Given the dynamics of \( Y_t \), we obtain:
+\[
+d\log(Y_t) = \left( p_2(t) - \frac{q_2^2(t)}{2} \right) dt + q_2(t) \, dW_t
+\]
+Integrating both sides gives:
+\[
+\log(Y_t) = \left( p_2(t) - \frac{q_2^2(t)}{2} \right)t + q_2(t)W_t + A
+\]
+where $A$ is an arbitrary constant. Exponentiating:
+\[
+Y_t = B \exp\left[ \left( p_2(t) - \frac{q_2^2(t)}{2} \right)t + q_2(t)W_t \right]
+\]
+Applying the initial condition, \( Y_0 = 1 \), allows us to solve for the arbitrary constant $B$. Thus, we simplify to:
+\[
+Y_t = \exp\left[ \left( p_2(t) - \frac{q_2^2(t)}{2} \right)t + q_2(t)W_t \right]
+\]
+
+\subsubsection*{Step 2: Guess the Product Form}
+Now looking at the real SDE we realise we can create the solution \(X_t\) as a product of the solution of the Homogeneous version with another stochastic process. i.e.
+\[
+X_t = Y_t\cdot Z_t
+\]
+where \(Z_t\) is the solution of
+\[
+dZ_t = \alpha(t)dt + \beta(t)dW_t, \quad Z_0 = X_0
+\]
+and \(\alpha(t),\,\beta(t)\) are functions to be determined.
+
+The structure of this solution is analogous to the expansion of brackets in ordinary algebra (think of expanding \((x+1)(x-3)\), you get cross terms which are linear and constant).
+
+\subsubsection*{Step 3: Apply \Itos formula}
+Applying \Itos product rule we get
+\[
+dX_t = d(Y_tZ_t) = Y_tdZ_t + Z_tdY_t + dY_tdZ_t
+\]
+group terms and then simply equate coefficients to solve for \(\alpha(t),\,\beta(t)\) using the previously computed value for \(Y_t\) where necessary to make \(dZ_t\) directly integrable. Having then solved for both \(Z_t,\,Y_t\) we can then piece together the solution for \(X_t\) rather trivially.
+
+What we have done is solve the Homogeneous equation, then varied the constants to account for the extra terms, hence the name. By construction, the product \(Y_tZ_t\) satisfies the original SDE and the form of \(Z_t\) is reverse-engineered to fix the mismatch cause by the terms \(p_1(t)\) and \(q_1(t)\).
+
+\subsection*{Continuing the solution}
+
+To begin, we seek a solution of the form \(X_t = Y_t Z_t\) where \(Y_t\) is the solution of \(dY_t = aY_tdW_t, \quad Y_0 = 1\) and \(Z_t\) is the solution of \(dZ_t = \alpha_tdt + \beta_tdW_t, \quad Z_0 = X_0\) and \(\alpha_t,\,\beta_t\) are functions to be determined.
+
+First we solve for \(Y_t\).
+\[
+d\log(Y_t) = -\frac{a^2}{2}dt + adW_t
+\]
+From which we see that
+\begin{align*}
+    \log(Y_t) &= -\frac{a^2}{2}t + aW_t + A\\
+    Y_t &= Be^{-\frac{a^2}{2}t + aW_t}
+\end{align*}
+where $A$ and $B$ are arbitrary constants. Applying the initial conditions, \(Y_0 = 1\), we see that
+\[
+Y_t = e^{-\frac{a^2}{2}t + aW_t}
+\]
+
+Returning now to \(X_t\)
+\begin{align*}
+dX_t &= \left(\alpha_t + a\beta_t\right)Y_tdt + \left(aY_tZ_t + \beta_tY_t\right)dW_t\\
+&= \left(\alpha_t + a\beta_t\right)Y_tdt + \left(aX_t + \beta_tY_t\right)dW_t
+\end{align*}
+Equating coefficients
+\[
+\beta_t = bY_t^{-1},\quad \alpha_t = \mu Y_t^{-1} - a\beta_t
+\]
+Solving for \(Z_t\)
+\begin{align*}
+    dZ_t &= \left(\mu Y_t^{-1} - abY_t^{-1}\right)dt + bY_t^{-1}dW_t\\
+    &= e^{\frac{a^2}{2}t - aW_t}\left(\mu - ab\right)dt + e^{\frac{a^2}{2}t - aW_t}bdW_t\\
+    Z_t &= \int_0^te^{\frac{a^2}{2}s - aW_s}\left(\mu - ab\right)ds + \int_0^te^{\frac{a^2}{2}s - aW_s}bdW_s + X_0
+\end{align*}
+We can now solve for \(X_t\) fully
+\[
+\boxed{
+X_t = e^{-\frac{a^2}{2}t + aW_t}\left(X_0 + \int_0^te^{\frac{a^2}{2}s - aW_s}\left(\mu - ab\right)ds + \int_0^te^{\frac{a^2}{2}s - aW_s}bdW_s\right)
+}
+\]
+which is the final answer for this puzzle.
+
+\bigskip
+
+\section*{Takeaways}
+This is one of the most technically demanding puzzles you may encounter in a Quant finance interview. Nonetheless solving this puzzle proves that you can:
+
+\begin{itemize}
+    \item Apply \Itos formula and \Itos product rule.
+    \item Work backwards from stochastic differentials to integrals.
+    \item Apply the variation of constants method to solve any general affine SDE.
+    \item Solve, for a closed form solution, any SDE for which a closed form solution can be found.
+\end{itemize}
+
+The ability to solve this, and explain your solution in an interview setting is a good indicator that you are among the brightest hopeful Quants.
+
+\vspace*{\fill}
+\begin{center}
+    \rule{\linewidth}{0.5pt} \\
+    \textbf{More Editorials:} \href{https://github.com/UIronsMaths/Quant-Puzzle-Editorials}{https://github.com/UIronsMaths/Quant-Puzzle-Editorials}
+\end{center}
+
+\end{document}
