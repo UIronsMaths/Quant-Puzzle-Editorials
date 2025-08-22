@@ -51,6 +51,7 @@ The scale is calibrated to reflect difficulty for someone with a solid postgradu
 | #001       | Brownian Flip | Stochastic Processes | Interview-Level |
 | #002       | A Canonical Ito Integral | Ito Integrals & Ito's Lemma | Interview-Level |
 | #003       | Solving an Affine SDE with Multiplicative Noise | SDEs | Interview-Level |
+| #004       | An Insightful ODE | Easy |
 | *(more coming soon)* | | | |
 
 ---

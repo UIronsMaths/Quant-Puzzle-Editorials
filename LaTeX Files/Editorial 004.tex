@@ -1,0 +1,107 @@
+\documentclass[12pt]{article}
+% Packages
+\usepackage{amsmath, amssymb, amsfonts}
+\usepackage{geometry}
+\usepackage{enumitem}
+\usepackage{multicol}
+\usepackage{fancyhdr}
+\usepackage{textcomp}
+
+% Page setup
+\geometry{a4paper, margin=1in}
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{Quant Puzzle Editorial \#004}
+\chead{Topic: ODEs}
+\rhead{Difficulty: Easy}
+\lfoot{\today}
+\cfoot{\thepage}
+\rfoot{\textcopyright U. Irons}
+
+%\usepackage[a4paper,margin=1in]{geometry} % Adjust margins
+\usepackage{hyperref} % Clickable links
+%\usepackage{enumitem} % Better lists
+\usepackage{listings} % Code formatting
+\usepackage{xcolor} % Colors for code
+\usepackage{graphicx}
+
+% Define C++ Code Style
+\lstdefinestyle{cppstyle}{
+    language=C++,
+    basicstyle=\ttfamily\footnotesize,
+    keywordstyle=\color{blue},
+    commentstyle=\color{green},
+    stringstyle=\color{red},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    stepnumber=1,
+    breaklines=true,
+    tabsize=4,
+    frame=single
+}
+
+\newcommand{\cppinline}[1]{\lstinline[style=cppstyle]|#1|}
+
+\begin{document}
+
+\begin{center}
+    \Large \textbf{Quant Puzzle \#004: An Insightful ODE}
+\end{center}
+
+\section*{Problem Statement}
+\textit{
+Find $f(x)$ if \[f'(x)=f(x)\left(1-f(x)\right)\]
+}
+
+\bigskip
+
+\section*{Context \& Key Insights}
+This is essentially the logistic equation, a cornerstone in modelling constrained growth. This problem is representative of what you might encounter when modelling population dynamics and could be used in an interview setting as a test of mathematical dexterity and clarity of explanation.
+
+\bigskip
+
+\section*{Core Ideas}
+Key Tools:
+\begin{itemize}
+    \item Use separation of variables ($\frac{dy}{dx}\equiv y'$).
+    \item Use Partial Fractions to simplify the integrand of the resulting integral to a form amenable to direct integration.
+\end{itemize}
+
+\bigskip
+
+\section*{Solution}
+Let $y=f(x)$ for notational simplicity. It is easy to see that:
+\[\frac{y'}{y(1-y)}=1\]
+Integrating...
+\[\int\frac{y'}{y(1-y)}dx = \int 1 dx\]
+Note that $\frac{dy}{dx}\equiv y'$ implies that $dy = y' dx$. This is the basis behind the technique of separation of variables. Using $A, B$ and $C$ to denote the arbitrary constants of integration we have
+\[\int\frac{1}{y(1-y)}dy = x + A\]
+We recognise the denominator of the integrand as a product of two linear factors. Therefore we can use partial fractions to simplify the integrand, making it amenable to direct integration.
+\[\int\frac{1}{y(1-y)}dy = \int\frac{1}{y}+\frac{1}{1-y}dy\]
+Now that we have something we can integrate we can proceed.
+\[\log|y| - \log|1-y| = x + B\]
+Using the laws of logarithms we can simplify this to
+\[\log\left|\frac{y}{1-y}\right| = x + B\]
+Exponentiating and recalling that the exponential function is a purely positive valued function for any input (allowing us to drop the modulus operator) we arrive at
+\[\frac{y}{1-y} = Ce^{x}\]
+Rearranging for $y$ we get
+\[y=\frac{Ce^x}{1+Ce^x}\]
+Given the absence of initial or boundary conditions, this is the limit of how much of a solution we can give. We cannot solve for specific values of the arbitrary constant $C$. We can however comment on the asymptotic behaviour of the solution which tends to $1$ as $x\rightarrow{\infty}$.
+
+\bigskip
+
+\section*{Takeaways}
+This is a subtle ODE whose difficulty stems from two tricks, one less obvious than the other. These techniques are used to simplify your problem and are:
+\begin{itemize}
+    \item The use of the separation of variables identity $\frac{dy}{dx}\equiv y'$.
+    \item The technique of partial fractions.
+\end{itemize}
+This problem is classified as Easy, since a mathematically literate postgraduate should be able to solve it by applying standard ODE techniques. The only challenge lies in spotting separation of variables and partial fractions quickly.
+
+\vspace*{\fill}
+\begin{center}
+    \rule{\linewidth}{0.5pt} \\
+    \textbf{More Editorials:} \href{https://github.com/UIronsMaths/Quant-Puzzle-Editorials}{https://github.com/UIronsMaths/Quant-Puzzle-Editorials}
+\end{center}
+
+\end{document}
