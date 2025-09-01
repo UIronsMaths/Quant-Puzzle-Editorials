@@ -52,6 +52,7 @@ The scale is calibrated to reflect difficulty for someone with a solid postgradu
 | #002       | A Canonical Ito Integral | Ito Integrals & Ito's Lemma | Interview-Level |
 | #003       | Solving an Affine SDE with Multiplicative Noise | SDEs | Interview-Level |
 | #004       | An Insightful ODE | Easy |
+| #005       | Solving an SDE with non-standard Brownian Motion | SDEs | Interview-Level |
 | *(more coming soon)* | | | |
 
 ---

@@ -1,0 +1,191 @@
+\documentclass[12pt]{article}
+% Packages
+\usepackage{amsmath, amssymb, amsfonts}
+\usepackage{geometry}
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{graphicx}
+
+%\geometry{a4paper, margin=1in}
+%\setlist{nosep}
+
+% Define C++ Code Style
+\lstdefinestyle{cppstyle}{
+    language=C++,
+    basicstyle=\ttfamily\footnotesize,
+    keywordstyle=\color{blue},
+    commentstyle=\color{green},
+    stringstyle=\color{red},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    stepnumber=1,
+    breaklines=true,
+    tabsize=4,
+    frame=single
+}
+
+\newcommand{\cppinline}[1]{\lstinline[style=cppstyle]|#1|}
+\newcommand{\Ito}{It$\hat{\text{o}}$ }
+\newcommand{\Itos}{It$\hat{\text{o}}$'s }
+
+% Page setup
+\geometry{a4paper, margin=1in}
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{Quant Puzzle Editorial \#005}
+\chead{Topic: SDEs}
+\rhead{Difficulty: Interview-Level}
+\lfoot{\today}
+\cfoot{\thepage}
+\rfoot{\textcopyright U. Irons}
+
+\begin{document}
+
+\begin{center}
+    \Large \textbf{Quant Puzzle \#005: Solving an SDE with nonstandard Brownian Motion.}
+\end{center}
+
+\section*{Problem Statement}
+\textit{Solve the following Stochastic Differential Equation}
+\[
+dX_t = t^2 dt+ e^{\frac{t}{2}}\cos(W_t)dW_t, \quad X_0 = 0
+\]
+\textit{where \(W_t\) is a Brownian Motion.}
+\section*{Follow-Up Question}
+\textit{Compute $\mathbb{E}(X_t)$ and Var$(X_t)$.}
+
+\bigskip
+
+\section*{Context \& Key Insights}
+You may recall from editorial 003 that we have solved SDEs using the method of variation of constants. This required the SDE to be of the form
+\[
+dX_t = f(t, X_t)dt + g(t, X_t) dW_t
+\]
+where both \(f(t, X_t)\) and \(g(t, X_t)\) are linear in \(X_t\).
+
+This puzzle is a departure from the standard linear SDEs typically solved using variation of constants. 
+What makes it distinctive is that the diffusion coefficient is not a function of time and the process $X_t$, but instead of time and the Brownian path $W_t$ itself. 
+This small change forces you to abandon the standard recipe and look for a more inventive approach. 
+
+The key insight is to recognise that \Itos Lemma can be used in reverse: by constructing a process $Y_t$ whose diffusion term matches the nonstandard coefficient, you can express $X_t$ in terms of $Y_t$ plus an integrable drift term. 
+The real challenge is then in the follow-up, which requires mastery of symmetry arguments, trigonometric identities, and the characteristic function of the Gaussian distribution. 
+
+For this reason the puzzle is classified as \textbf{Interview-Level}. The main solution is elegant once seen, but the auxiliary computations under time pressure make it a serious test of a quant’s readiness.
+
+\section*{Core Ideas}
+Key Tools:
+\begin{itemize}
+    \item Cleverly consider a function which, upon application of \Itos Lemma, has an SDE with a matching diffusion term.
+    \item Express $X_t$ in terms of this function.
+    \item Solve the resulting SDE through simple integration.
+    \item Prove that the expectation of an odd function is zero under a symmetric distribution, thereby computing the mean.
+    \item Recall and apply Euler's formula and the identities for both $\cos(2x)$ and the characteristic function of a standard normal distribution to compute the variance.
+\end{itemize}
+
+\bigskip
+
+\section*{Solution}
+\textbf{Summary:} We solve this SDE by expressing it in terms of a different SDE whose direct integral we know and which provides the diffusion term of the original SDE and additional drift terms. Then the resulting SDE can be solved through direct integration.
+
+\bigskip
+\noindent
+Let us consider a function \(f(t, x)\) whose derivative with respect to $x$ ($f_x$ or \(\frac{\partial}{\partial x}f(t,x)\)) matches the diffusion coefficient \(e^{\frac{t}{2}}\cos(x)\). Directly integrating provides us with
+\[
+f(t,x) = e^{\frac{t}{2}}\sin(x)
+\]
+We will define a new stochastic process $Y_t$ to take the form of $f(t,W_t)$.
+\[
+Y_t = e^{\frac{t}{2}}\sin(W_t)
+\]
+Applying \Itos Lemma we see that
+\[
+dY_t = e^{\frac{t}{2}}\cos(W_t)dW_t
+\]
+We can now express $dX_t$ in terms of this new SDE
+\[
+dX_t = dY_t + t^2dt
+\]
+Directly integrating this SDE results in
+\[
+X_t = Y_t + \int t^2dt = Y_t + \frac{t^3}{3} + A
+\]
+where $A$ is an arbitrary constant of integration. Applying the initial conditions ($X_0 = 0$) we see that $A=0$. Thus the solution of the SDE is
+\[
+X_t = e^{\frac{t}{2}}\sin(W_t) + \frac{t^3}{3}
+\]
+The expectation and variance are trivially seen as
+\[
+\mathbb{E}(X_t) = e^{\frac{t}{2}}\mathbb{E}\left[\sin(W_t)\right] + \frac{t^3}{3}
+\]
+\[
+\mathrm{Var}(X_t) = e^{t}\mathrm{Var}\left[\sin(W_t)\right]
+\]
+Attacking the expectation first
+\[
+\mathbb{E}\left[\sin(W_t)\right] = \mathbb{E}\left[\sin\left(\sqrt{t}\cdot Z\right)\right]
+\]
+where $Z$ is a standard normal variable.
+\[
+\mathbb{E}\left[\sin\left(\sqrt{t}\cdot Z\right)\right] = \int_{-\infty}^{\infty}\sin\left(\sqrt{t}x\right)\cdot \frac{1}{\sqrt{2\pi}}e^{-\frac{x^2}{2}}dx
+\]
+This integral is not pleasant to compute, but can be solved easily with a few shortcuts. First, recall that the standard normal distribution is symmetric. That is \(f_X(-x) = f_X(x)\).
+Second, recall that an odd function has the property that \(g(-x)=-g(x)\). Third, recall that the sine function is an odd function. These facts give rise to the following useful result (a short proof of which is found at the end of the editorial):
+
+\begin{center}
+\textit{The expectation of an odd function under any symmetric distribution is 0.}
+\end{center}
+
+Now onto the variance. Using the result that $\mathbb{E}(\sin(W_t))=0$ we see the variance is
+\[
+\mathrm{Var}(X_t) = e^t\mathbb{E}\left[\sin^2\left(\sqrt{t}\cdot Z\right)\right]
+\]
+Using the identity \(\cos(2x) = 1 - 2\sin^2(x)\) this is
+\[
+\mathrm{Var}(X_t) = \frac{e^t}{2}- \frac{e^t}{2}\mathbb{E}\left[\cos\left(2\sqrt{t} Z\right)\right]
+\]
+Another nasty integral requires yet another clever trick to deal with. Recall from your studies of complex numbers Euler's formula \(e^{i\theta} = \cos\left(\theta\right) + i\sin\left(\theta\right)\). Using this and the fact that we have shown \(\mathbb{E}\left(\sin(x)\right) = 0\) for a symmetric distribution we can express the variance as
+\[
+\mathrm{Var}(X_t) = \frac{e^t}{2}- \frac{e^t}{2}\mathbb{E}\left[e^{2\sqrt{t}i Z}\right]
+\]
+This is identically the characteristic function. The characteristic function of the standard normal variable is \(\mathbb{E}(e^{iuZ}) = e^{-\frac{u^2}{2}}\). Applying this identity we arrive at
+\[
+\mathrm{Var}(X_t) = \frac{e^t-e^{-t}}{2}
+\]
+
+\bigskip
+
+\section*{Takeaways}
+The base solution is arguably straightforward but the variance calculation under pressure is what elevates it to interview level. Solving this puzzle proves that you can:
+
+\begin{itemize}
+    \item Apply \Itos formula and \Itos product rule.
+    \item Perform stochastic integration.
+    \item Apply a range of elementary identities (trigonometric, Euler's) to simplify the problem.
+    \item Show familiarity with advanced concepts in probability theory (such as characteristic functions) that go beyond traditional courses.
+\end{itemize}
+
+This kind of problem is an excellent benchmark for interview readiness: the solution itself rewards creativity, and the follow-up computations show whether you can stay composed under pressure.
+
+\bigskip
+
+\section*{Proof}
+Let $g(x)$ be an odd function and let $f_X(x)$ be the distribution function of a symmetric random variable.
+\begin{align*}
+\mathbb{E}(g(x)) &= \int_{-\infty}^{\infty}g(x)\cdot f_X(x) dx\\
+&= \int_{-\infty}^{0}g(x)f_X(x)dx + \int_0^{\infty}g(x)f_X(x)dx\\
+&=\int_{0}^{\infty}g(-x)f_X(-x)dx + \int_0^{\infty}g(x)f_X(x)dx\\
+&=\int_{0}^{\infty}-g(x)f_X(x)dx + \int_0^{\infty}g(x)f_X(x)dx\\
+&=\int_0^{\infty}g(x)f_X(x)dx - \int_0^{\infty}g(x)f_X(x)dx\\
+&= 0
+\end{align*}
+
+\vspace*{\fill}
+\begin{center}
+    \rule{\linewidth}{0.5pt} \\
+    \textbf{More Editorials:} \href{https://github.com/UIronsMaths/Quant-Puzzle-Editorials}{https://github.com/UIronsMaths/Quant-Puzzle-Editorials}
+\end{center}
+
+\end{document}
