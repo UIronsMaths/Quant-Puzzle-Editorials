@@ -1,0 +1,97 @@
+\documentclass[12pt]{article}
+% Packages
+\usepackage{amsmath, amssymb, amsfonts}
+\usepackage{geometry}
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{graphicx}
+
+%\geometry{a4paper, margin=1in}
+%\setlist{nosep}
+
+% Define C++ Code Style
+\lstdefinestyle{cppstyle}{
+    language=C++,
+    basicstyle=\ttfamily\footnotesize,
+    keywordstyle=\color{blue},
+    commentstyle=\color{green},
+    stringstyle=\color{red},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    stepnumber=1,
+    breaklines=true,
+    tabsize=4,
+    frame=single
+}
+
+\newcommand{\cppinline}[1]{\lstinline[style=cppstyle]|#1|}
+\newcommand{\Ito}{It$\hat{\text{o}}$ }
+\newcommand{\Itos}{It$\hat{\text{o}}$'s }
+\newcommand{\E}{$\mathbb{E}$}
+\newcommand{\Var}{$\mathrm{Var}$}
+
+% Page setup
+\geometry{a4paper, margin=1in}
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{Quant Puzzle Editorial \#007}
+\chead{Topic: Calculus}
+\rhead{Difficulty: Easy}
+\lfoot{\today}
+\cfoot{\thepage}
+\rfoot{\textcopyright U. Irons}
+
+\begin{document}
+
+\begin{center}
+    \Large \textbf{Quant Puzzle \#007: Which is Bigger?}
+\end{center}
+
+\section*{Problem Statement}
+\textit{\textbf{Without} calculating any numerical result, determine which is larger, $e^\pi$ or $\pi^e$.}
+
+\bigskip
+
+\section*{Core Ideas}
+We use just two simple tools from calculus and one clever trick involving logarithms to solve this problem:
+\begin{itemize}
+    \item Logarithms can be used to form an inequality in terms of $\pi$ and $e$.
+    \item We can determine if the function on either side of the inequality is increasing and what its maximum is.
+    \item We use the quotient rule to determine the first and second derivatives. These are then used to inform on the maxima of the function.
+\end{itemize}
+
+\section*{Solution}
+\noindent
+We begin with the subtle trick that is the most difficult part of solving this problem. By taking logarithms, specifically the natural log, of $e^\pi$ and $\pi^e$ we end up with $\pi\ln(e)$ and $e\ln(\pi)$.
+
+If $e^\pi$ is the larger of the two then we have the inequality $e\ln(\pi)>\pi\ln(e)$. This can be rearranged to $$\frac{\ln(e)}{e}>\frac{\ln(\pi)}{\pi}$$
+Alternatively, if $\pi^e$ is the larger of the two, by the same logic we have $$\frac{\ln(e)}{e}<\frac{\ln(\pi)}{\pi}$$
+We need to determine which case is true. To do this we notice that each side of both inequalities is a function of the form $$f(x) = \frac{\ln(x)}{x}$$
+We also recall from calculus that an increasing function is one where $f(x) < f(y)$ for $x<y$ and a decreasing function is one where $f(x)>f(y)$ for $x<y$. We can use whether or not $f(x)$ is an increasing or decreasing function over the interval $e$ to $\pi$ to determine which inequality holds true.
+
+Using the quotient rule from calculus we see that the derivative of this function is $$f'(x) = \frac{1-\ln(x)}{x^2}$$
+Solving $f'(x) = 0$ shows us that we have a stationary point at $x=e$. Considering values of $x$ greater than $e$ yields a negative number in the numerator of $f'(x)$ which implies that $f(x)$ is a decreasing function for $x>e$. For a quick sanity check we consider the second derivative: $$f''(x) = \frac{2\ln(x) - 3}{x^3}$$
+which for $x=e$ yields $-\frac{1}{e^3}$ confirming that the stationary point at $x=e$ is indeed a maximum (a global maximum in fact).
+
+To summise, we can now recognise that $$\frac{\ln(e)}{e} > \frac{\ln(\pi)}{\pi}$$
+and thus we conclude that $e^\pi$ is the greater of the two.
+
+\section*{Takeaways}
+The main difficulty of this problem lies in identifying that taking logarithms can provide a suitable approach. Solving this puzzle proves that you:
+
+\begin{itemize}
+    \item Have a strong grasp of basic calculus.
+    \item Can re-express a problem into simpler to solve cases (in this case, by using logarithms).
+\end{itemize}
+This puzzle can be used to test whether or not you can keep calm under pressure when a path to a solution is not obvious. An interviewer will likely hint that a re-expression is required so this puzzle also tests your ability to use the feedback you are being given.
+
+\vspace*{\fill}
+\begin{center}
+    \rule{\linewidth}{0.5pt} \\
+    \textbf{More Editorials:} \href{https://github.com/UIronsMaths/Quant-Puzzle-Editorials}{https://github.com/UIronsMaths/Quant-Puzzle-Editorials}
+\end{center}
+
+\end{document}

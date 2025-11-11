@@ -53,6 +53,8 @@ The scale is calibrated to reflect difficulty for someone with a solid postgradu
 | #003       | Solving an Affine SDE with Multiplicative Noise | SDEs | Interview-Level |
 | #004       | An Insightful ODE | Easy |
 | #005       | Solving an SDE with non-standard Brownian Motion | SDEs | Interview-Level |
+| #006       | Stair Climbing | Easy |
+| #007       | Which is Bigger? | Easy |
 | *(more coming soon)* | | | |
 
 ---
